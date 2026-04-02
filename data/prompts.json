@@ -1,0 +1,118 @@
+{
+  "free": [
+    {
+      "id": 1,
+      "title": "Email Writer",
+      "description": "Write professional emails quickly",
+      "category": "Writing",
+      "prompt": "Write a professional email about {topic}. The tone should be {tone}. Keep it concise and actionable.",
+      "icon": "📧"
+    },
+    {
+      "id": 2,
+      "title": "Blog Post Generator",
+      "description": "Generate blog post outlines",
+      "category": "Content",
+      "prompt": "Create a detailed blog post outline about {topic}. Include: introduction, 3-5 main sections with bullet points, and a conclusion.",
+      "icon": "📝"
+    },
+    {
+      "id": 3,
+      "title": "Social Media Post",
+      "description": "Create engaging social media content",
+      "category": "Marketing",
+      "prompt": "Write a {platform} post about {topic}. Make it engaging with emojis and relevant hashtags. Target audience: {audience}.",
+      "icon": "📱"
+    },
+    {
+      "id": 4,
+      "title": "Code Explainer",
+      "description": "Explain code in simple terms",
+      "category": "Development",
+      "prompt": "Explain this code in simple terms: {code}. Break it down step by step.",
+      "icon": "💻"
+    },
+    {
+      "id": 5,
+      "title": "Product Description",
+      "description": "Write compelling product descriptions",
+      "category": "E-commerce",
+      "prompt": "Write a compelling product description for {product}. Highlight key benefits and features. Target audience: {audience}.",
+      "icon": "🛍️"
+    },
+    {
+      "id": 6,
+      "title": "Meeting Notes",
+      "description": "Summarize meeting transcripts",
+      "category": "Productivity",
+      "prompt": "Summarize these meeting notes: {notes}. Extract key decisions, action items with owners, and next steps.",
+      "icon": "📋"
+    }
+  ],
+  "premium": [
+    {
+      "id": 101,
+      "title": "SEO Blog Optimizer",
+      "description": "Optimize blog posts for SEO with keyword research integration",
+      "category": "Marketing",
+      "prompt": "Optimize this blog post for SEO: {content}. Focus on keyword: {keyword}. Include meta description, title tag suggestions, and content improvements.",
+      "icon": "🚀"
+    },
+    {
+      "id": 102,
+      "title": "Sales Email Sequence",
+      "description": "Create multi-touch sales email sequences",
+      "category": "Sales",
+      "prompt": "Create a 5-email sales sequence for {product/offer}. Email 1: Introduction. Email 2: Value prop. Email 3: Case study. Email 4: Objection handling. Email 5: Urgency/close.",
+      "icon": "💰"
+    },
+    {
+      "id": 103,
+      "title": "Video Script Generator",
+      "description": "Generate YouTube/TikTok video scripts with hooks",
+      "category": "Content",
+      "prompt": "Write a {platform} video script about {topic}. Length: {duration}. Include: attention-grabbing hook in first 3 seconds, main content, call-to-action. Add visual cues in [brackets].",
+      "icon": "🎬"
+    },
+    {
+      "id": 104,
+      "title": "Landing Page Copy",
+      "description": "High-converting landing page copy",
+      "category": "Marketing",
+      "prompt": "Write landing page copy for {product}. Include: compelling headline, subheadline, benefits section (3-5 bullet points), social proof section, and CTA.",
+      "icon": "🎯"
+    },
+    {
+      "id": 105,
+      "title": "Interview Question Generator",
+      "description": "Generate role-specific interview questions",
+      "category": "HR",
+      "prompt": "Generate 10 interview questions for {role} position. Include: 3 behavioral questions, 3 technical questions, 2 situational questions, 2 culture fit questions. Add expected answers.",
+      "icon": "👔"
+    },
+    {
+      "id": 106,
+      "title": "Press Release Writer",
+      "description": "Professional press release creation",
+      "category": "PR",
+      "prompt": "Write a press release for: {announcement}. Follow AP style. Include: compelling headline, dateline, lead paragraph, quotes, company boilerplate, media contact info.",
+      "icon": "📰"
+    },
+    {
+      "id": 107,
+      "title": "Business Plan Generator",
+      "description": "Create comprehensive business plan outlines",
+      "category": "Business",
+      "prompt": "Create a business plan outline for: {business idea}. Include: executive summary, market analysis, competitive landscape, marketing strategy, financial projections, funding requirements.",
+      "icon": "📊"
+    },
+    {
+      "id": 108,
+      "title": "API Documentation Writer",
+      "description": "Generate clear API documentation",
+      "category": "Development",
+      "prompt": "Write API documentation for: {API description}. Include: overview, authentication, endpoints with request/response examples, error codes, rate limits.",
+      "icon": "🔌"
+    }
+  ]
+}
