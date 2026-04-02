@@ -1,13 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import { loadStripe } from '@stripe/stripe-js'
 import promptsData from '../data/prompts.json'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedPrompt, setSelectedPrompt] = useState<any>(null)
   const [isPremium, setIsPremium] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const allPrompts = [...promptsData.free, ...(isPremium ? promptsData.premium : [])]
   const categories = ['All', ...Array.from(new Set(allPrompts.map(p => p.category)))]
@@ -18,6 +22,43 @@ export default function Home() {
                          prompt.description.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
   })
+
+  const handleCheckout = async () => {
+    setIsLoading(true)
+
+    try {
+      // Create checkout session
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
+        }),
+      })
+
+      const { sessionId } = await response.json()
+
+      // Redirect to Stripe Checkout
+      const stripe = await stripePromise as any
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({
+          sessionId,
+        })
+
+        if (error) {
+          console.error('Stripe error:', error)
+          alert('Payment failed. Please try again.')
+        }
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      alert('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -154,10 +195,11 @@ export default function Home() {
               </div>
             </div>
             <button
-              onClick={() => alert('Payment integration coming soon!')}
-              className="px-12 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold rounded-full text-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all"
+              onClick={handleCheckout}
+              disabled={isLoading}
+              className="px-12 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold rounded-full text-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Get Started Now
+              {isLoading ? '🔄 Processing...' : '💳 Get Started Now'}
             </button>
           </div>
         )}

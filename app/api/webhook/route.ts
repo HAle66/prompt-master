@@ -1,0 +1,61 @@
+import { NextResponse } from 'next/server'
+import Stripe from 'stripe'
+import { headers } from 'next/headers'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.text()
+    const headersList = await headers()
+    const signature = headersList.get('stripe-signature')!
+
+    let event: Stripe.Event
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        webhookSecret
+      )
+    } catch (err: any) {
+      console.error('Webhook signature verification failed:', err.message)
+      return NextResponse.json(
+        { error: 'Invalid signature' },
+        { status: 400 }
+      )
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object as Stripe.Checkout.Session
+        console.log('Payment successful:', session.id)
+        // TODO: Grant user access to premium content
+        // You could:
+        // 1. Update database
+        // 2. Set a cookie
+        // 3. Send confirmation email
+        break
+      case 'customer.subscription.created':
+        const subscription = event.data.object as Stripe.Subscription
+        console.log('Subscription created:', subscription.id)
+        break
+      case 'invoice.paid':
+        console.log('Invoice paid')
+        break
+      default:
+        console.log(`Unhandled event type: ${event.type}`)
+    }
+
+    return NextResponse.json({ received: true })
+  } catch (error: any) {
+    console.error('Webhook error:', error)
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    )
+  }
+}
