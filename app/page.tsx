@@ -1,10 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
 import promptsData from '../data/prompts.json'
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
@@ -38,19 +35,12 @@ export default function Home() {
         }),
       })
 
-      const { sessionId } = await response.json()
+      const { url } = await response.json()
 
-      // Redirect to Stripe Checkout
-      const stripe = await stripePromise as any
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({
-          sessionId,
-        })
-
-        if (error) {
-          console.error('Stripe error:', error)
-          alert('Payment failed. Please try again.')
-        }
+      if (url) {
+        window.location.href = url
+      } else {
+        alert('Failed to create checkout session.')
       }
     } catch (error) {
       console.error('Checkout error:', error)
