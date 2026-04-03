@@ -7,11 +7,19 @@ function getStripe() {
 
 export async function POST(req: Request) {
   try {
-    const { priceId } = await req.json()
-
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json(
         { error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.' },
+        { status: 503 }
+      )
+    }
+
+    const body = await req.json().catch(() => ({}))
+    const priceId = body.priceId || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: 'No price ID configured. Please set NEXT_PUBLIC_STRIPE_PRICE_ID.' },
         { status: 503 }
       )
     }

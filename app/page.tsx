@@ -35,12 +35,12 @@ export default function Home() {
         }),
       })
 
-      const { url } = await response.json()
+      const data = await response.json()
 
-      if (url) {
-        window.location.href = url
+      if (data.url) {
+        window.location.href = data.url
       } else {
-        alert('Failed to create checkout session.')
+        alert('Failed to create checkout session: ' + (data.error || 'Unknown error'))
       }
     } catch (error) {
       console.error('Checkout error:', error)
