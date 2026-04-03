@@ -1,24 +1,29 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
 import { headers } from 'next/headers'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
 export async function POST(req: Request) {
   try {
+    if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+      return NextResponse.json(
+        { error: 'Stripe not configured' },
+        { status: 503 }
+      )
+    }
+
+    const Stripe = require('stripe')
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+
     const body = await req.text()
     const headersList = await headers()
     const signature = headersList.get('stripe-signature')!
 
-    let event: Stripe.Event
+    let event: any
 
     try {
       event = stripe.webhooks.constructEvent(
         body,
         signature,
-        webhookSecret
+        process.env.STRIPE_WEBHOOK_SECRET
       )
     } catch (err: any) {
       console.error('Webhook signature verification failed:', err.message)
@@ -31,16 +36,11 @@ export async function POST(req: Request) {
     // Handle the event
     switch (event.type) {
       case 'checkout.session.completed':
-        const session = event.data.object as Stripe.Checkout.Session
+        const session = event.data.object
         console.log('Payment successful:', session.id)
-        // TODO: Grant user access to premium content
-        // You could:
-        // 1. Update database
-        // 2. Set a cookie
-        // 3. Send confirmation email
         break
       case 'customer.subscription.created':
-        const subscription = event.data.object as Stripe.Subscription
+        const subscription = event.data.object
         console.log('Subscription created:', subscription.id)
         break
       case 'invoice.paid':

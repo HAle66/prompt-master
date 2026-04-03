@@ -1,11 +1,22 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+function getStripe() {
+  const Stripe = require('stripe')
+  return new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')
+}
 
 export async function POST(req: Request) {
   try {
     const { priceId } = await req.json()
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.' },
+        { status: 503 }
+      )
+    }
+
+    const stripe = getStripe()
 
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -17,9 +28,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}?canceled=true`,
-      customer_email: undefined, // Let Stripe collect email
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ai-prompts-hale.vercel.app'}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ai-prompts-hale.vercel.app'}?canceled=true`,
       metadata: {
         plan: 'premium',
       },
