@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
-
-function getStripe() {
-  const Stripe = require('stripe')
-  return new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')
-}
+import Stripe from 'stripe'
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
+    const secretKey = process.env.STRIPE_SECRET_KEY
+
+    if (!secretKey) {
+      console.error('Missing STRIPE_SECRET_KEY env var')
       return NextResponse.json(
         { error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.' },
         { status: 503 }
@@ -18,13 +17,19 @@ export async function POST(req: Request) {
     const priceId = body.priceId || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID
 
     if (!priceId) {
+      console.error('Missing price ID. NEXT_PUBLIC_STRIPE_PRICE_ID:', process.env.NEXT_PUBLIC_STRIPE_PRICE_ID)
       return NextResponse.json(
-        { error: 'No price ID configured. Please set NEXT_PUBLIC_STRIPE_PRICE_ID.' },
+        { error: 'No price ID configured.' },
         { status: 503 }
       )
     }
 
-    const stripe = getStripe()
+    console.log('Creating checkout session with priceId:', priceId)
+
+    const stripe = new Stripe(secretKey, {
+      apiVersion: '2025-02-24.acacia',
+      typescript: true,
+    })
 
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -43,11 +48,12 @@ export async function POST(req: Request) {
       },
     })
 
+    console.log('Checkout session created:', session.id)
     return NextResponse.json({ url: session.url })
   } catch (error: any) {
-    console.error('Stripe error:', error)
+    console.error('Stripe error:', error.message, error.stack)
     return NextResponse.json(
-      { error: error.message },
+      { error: error.message || 'Internal server error' },
       { status: 500 }
     )
   }
