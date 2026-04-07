@@ -32,6 +32,7 @@ export async function POST(req: Request) {
     })
 
     // Create Checkout Session
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://ai-prompts-hale.vercel.app').trim()
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -41,8 +42,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ai-prompts-hale.vercel.app'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ai-prompts-hale.vercel.app'}?canceled=true`,
+      success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}?canceled=true`,
       metadata: {
         plan: 'premium',
       },
