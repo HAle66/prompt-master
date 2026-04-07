@@ -3,7 +3,7 @@ import Stripe from 'stripe'
 
 export async function POST(req: Request) {
   try {
-    const secretKey = process.env.STRIPE_SECRET_KEY
+    const secretKey = process.env.STRIPE_SECRET_KEY?.trim()
 
     if (!secretKey) {
       console.error('Missing STRIPE_SECRET_KEY env var')
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => ({}))
-    const priceId = body.priceId || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID
+    const priceId = (body.priceId || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || '').trim()
 
     if (!priceId) {
       console.error('Missing price ID. NEXT_PUBLIC_STRIPE_PRICE_ID:', process.env.NEXT_PUBLIC_STRIPE_PRICE_ID)
